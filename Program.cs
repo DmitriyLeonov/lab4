@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,8 +13,8 @@ namespace lab4
         static void Main(string[] args)
         {
             Set<int> set1 = new Set<int>() { 1, 2, 3, 4, 5, 6, 7, 8 };
-            Set<int> set2 = new Set<int>() { 8, 9, 10, 11, 15, 16, 17, 18, 19 };
-            set2++;
+            Set<int> set2 = new Set<int>() { 19, 18, 16, 12, 11, 10, 9, 8, 7 };
+            set1++;
             Set<int> set3 = set1 + set2;
             Set<int> set4 = new Set<int>() { 1, 2, 3, 4, 5, 6, 7 };
             if (set4 <= set1)
@@ -27,6 +28,19 @@ namespace lab4
             int power = set2;
             Console.WriteLine(power);
             Console.WriteLine(set1 % 1);
+            Console.Read();
+
+            Set<int>.Owner Dima = new Set<int>.Owner("1", "Dima", "safd");
+            Dima.Date = Set<int>.Date.getdate();
+            Console.WriteLine(Dima.Id);
+            Console.WriteLine(Dima.Name);
+            Console.WriteLine(Dima.Corp);
+            Console.WriteLine(Dima.Date);
+            Console.Read();
+
+            string str = "qwertyuiopasdfghjklzxcvbnm";
+            Console.WriteLine(str.Encrypt());
+            Console.WriteLine(set1.Ordered());
             Console.Read();
         }
     }
@@ -195,6 +209,86 @@ namespace lab4
         IEnumerator IEnumerable.GetEnumerator()
         {
             return _items.GetEnumerator();
+        }
+
+        public class Owner
+        {
+            public string Id { get; set; }
+            public string Name { get; set; }
+            public string Corp { get; set; }
+            public string Date { get; set; }
+
+            public Owner(string id, string name, string corp)
+            {
+                Id = id;
+                Name = name;
+                Corp = corp;
+            }
+        }
+
+        public class Date
+        {
+            public static string getdate()
+            {
+                DateTime curdate = new DateTime();
+                curdate = DateTime.Now;
+                return curdate.ToString();
+            }
+        }
+
+    }
+
+    public static class StaticOperation
+    {
+        public static Set<int> Sum(Set<int> set1, Set<int> set2)
+        {
+            return set1 + set2;
+        }
+
+        public static int Count(Set<int> set1)
+        {
+            int count = set1;
+            return count;
+        }
+
+        public static int Diff(Set<int> set1)
+        {
+            int max = set1.Max();
+            int min = set1.Min();
+            return max - min;
+        }
+
+        public static string Encrypt(this string str)
+        {
+            UnicodeEncoding unicodeEncoding = new UnicodeEncoding();
+            byte[] secret = ProtectedData.Protect(unicodeEncoding.GetBytes(str), null, DataProtectionScope.CurrentUser);
+            string base64 = Convert.ToBase64String(secret);
+            return base64;
+        }
+
+        public static bool Ordered(this Set<int> set)
+        {
+            int counter = 0;
+            for (int i = 1; i < set.Count; i++)
+            {
+                if (set.ElementAt(i) >= set.ElementAt(i - 1))
+                    counter++;
+                else
+                    break;
+            }
+            if (counter + 1 == set.Count)
+                return true;
+            counter = 0;
+            for (int i = 1; i < set.Count; i++)
+            {
+                if (set.ElementAt(i) <= set.ElementAt(i - 1))
+                    counter++;
+                else
+                    break;
+            }
+            if (counter + 1 == set.Count)
+                return true;
+            return false;
         }
     }
 }
